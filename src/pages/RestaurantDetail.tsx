@@ -24,7 +24,7 @@ const RestaurantDetail = () => {
   const categories = Array.from(new Set(mockMenuItems.map((item) => item.category)));
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background animate-slide-up">
       <Navbar />
 
       {/* Restaurant Header */}

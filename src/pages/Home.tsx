@@ -8,7 +8,7 @@ import Navbar from "@/components/Navbar";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background animate-slide-up">
       <Navbar />
       
       {/* Hero Section */}
