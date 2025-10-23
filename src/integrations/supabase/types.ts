@@ -14,7 +14,176 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      favorite_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          item_description: string | null
+          item_image: string | null
+          item_name: string
+          last_ordered: string
+          order_count: number
+          price: number
+          restaurant_id: string
+          restaurant_name: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          item_description?: string | null
+          item_image?: string | null
+          item_name: string
+          last_ordered?: string
+          order_count?: number
+          price: number
+          restaurant_id: string
+          restaurant_name: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          item_description?: string | null
+          item_image?: string | null
+          item_name?: string
+          last_ordered?: string
+          order_count?: number
+          price?: number
+          restaurant_id?: string
+          restaurant_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          item_description: string | null
+          item_image: string | null
+          item_name: string
+          order_id: string
+          price: number
+          quantity: number
+          veg: boolean
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          item_description?: string | null
+          item_image?: string | null
+          item_name: string
+          order_id: string
+          price: number
+          quantity?: number
+          veg?: boolean
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          item_description?: string | null
+          item_image?: string | null
+          item_name?: string
+          order_id?: string
+          price?: number
+          quantity?: number
+          veg?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          delivered_at: string | null
+          delivery_address: string
+          delivery_fee: number
+          id: string
+          payment_method: string
+          rating: number | null
+          restaurant_id: string
+          restaurant_image: string | null
+          restaurant_name: string
+          status: string
+          tax: number
+          total_amount: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delivered_at?: string | null
+          delivery_address: string
+          delivery_fee?: number
+          id?: string
+          payment_method: string
+          rating?: number | null
+          restaurant_id: string
+          restaurant_image?: string | null
+          restaurant_name: string
+          status?: string
+          tax: number
+          total_amount: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delivered_at?: string | null
+          delivery_address?: string
+          delivery_fee?: number
+          id?: string
+          payment_method?: string
+          rating?: number | null
+          restaurant_id?: string
+          restaurant_image?: string | null
+          restaurant_name?: string
+          status?: string
+          tax?: number
+          total_amount?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

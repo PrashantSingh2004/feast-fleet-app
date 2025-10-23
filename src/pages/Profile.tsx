@@ -1,10 +1,86 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { User, MapPin, CreditCard, ShoppingBag, Heart } from "lucide-react";
+import { User, MapPin, CreditCard, ShoppingBag, Heart, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Profile = () => {
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate("/auth");
+      return;
+    }
+    setUser(session.user);
+    fetchProfile(session.user.id);
+  };
+
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (error && error.code !== "PGRST116") throw error;
+      
+      if (data) {
+        setProfile(data);
+        setFullName(data.full_name || "");
+        setPhone(data.phone || "");
+      }
+    } catch (error: any) {
+      console.error("Error fetching profile:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .upsert({
+          user_id: user.id,
+          full_name: fullName,
+          phone: phone,
+        });
+
+      if (error) throw error;
+      toast.success("Profile updated successfully!");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update profile");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background animate-slide-up">
       <Navbar />
@@ -20,10 +96,12 @@ const Profile = () => {
                 <User className="h-5 w-5" />
                 Account Details
               </Button>
-              <Button variant="ghost" className="w-full justify-start gap-3">
-                <ShoppingBag className="h-5 w-5" />
-                My Orders
-              </Button>
+              <Link to="/orders" className="block">
+                <Button variant="ghost" className="w-full justify-start gap-3">
+                  <ShoppingBag className="h-5 w-5" />
+                  My Orders
+                </Button>
+              </Link>
               <Button variant="ghost" className="w-full justify-start gap-3">
                 <Heart className="h-5 w-5" />
                 Favorites
@@ -48,27 +126,36 @@ const Profile = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm font-medium text-card-foreground mb-2 block">
-                      Full Name
+                      Email
                     </label>
-                    <Input placeholder="John Doe" />
+                    <Input value={user?.email || ""} disabled />
                   </div>
 
                   <div>
                     <label className="text-sm font-medium text-card-foreground mb-2 block">
-                      Email
+                      Full Name
                     </label>
-                    <Input type="email" placeholder="john@example.com" />
+                    <Input
+                      placeholder="John Doe"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                    />
                   </div>
 
                   <div>
                     <label className="text-sm font-medium text-card-foreground mb-2 block">
                       Phone Number
                     </label>
-                    <Input type="tel" placeholder="+91 98765 43210" />
+                    <Input
+                      type="tel"
+                      placeholder="+91 98765 43210"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
                   </div>
 
                   <div className="pt-4">
-                    <Button variant="default" size="lg">
+                    <Button variant="default" size="lg" onClick={handleSave}>
                       Save Changes
                     </Button>
                   </div>
@@ -85,11 +172,11 @@ const Profile = () => {
                   </div>
                 </Link>
 
-                <Link to="/">
+                <Link to="/orders">
                   <div className="p-4 rounded-xl border border-border bg-card hover:shadow-[var(--shadow-soft)] transition-[var(--transition-smooth)] cursor-pointer">
                     <Heart className="h-8 w-8 text-primary mb-2" />
-                    <h3 className="font-semibold text-card-foreground">Favorites</h3>
-                    <p className="text-sm text-muted-foreground">Your loved meals</p>
+                    <h3 className="font-semibold text-card-foreground">My Orders</h3>
+                    <p className="text-sm text-muted-foreground">View order history</p>
                   </div>
                 </Link>
               </div>
