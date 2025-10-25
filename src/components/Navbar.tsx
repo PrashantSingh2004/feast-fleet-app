@@ -4,10 +4,13 @@ import { ShoppingCart, User, MapPin, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useCart } from "@/contexts/CartContext";
 
 const Navbar = () => {
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
+  const { getCartCount } = useCart();
+  const cartCount = getCartCount();
 
   useEffect(() => {
     // Get initial session
@@ -49,9 +52,11 @@ const Navbar = () => {
               <Button variant="ghost" size="sm" className="relative gap-2">
                 <ShoppingCart className="h-4 w-4" />
                 <span className="hidden md:inline">Cart</span>
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  0
-                </span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
               </Button>
             </Link>
 

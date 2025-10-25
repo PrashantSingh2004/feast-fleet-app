@@ -1,14 +1,17 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft, Star, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
 import { mockRestaurants, mockMenuItems } from "@/data/mockData";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
 
 const CuisineDetail = () => {
   const { cuisine } = useParams<{ cuisine: string }>();
   const cuisineName = cuisine?.charAt(0).toUpperCase() + cuisine?.slice(1) || "";
+  const { addToCart } = useCart();
 
   const restaurants = mockRestaurants.filter(
     (r) => r.cuisine.toLowerCase() === cuisine?.toLowerCase()
@@ -17,6 +20,11 @@ const CuisineDetail = () => {
   const menuItems = mockMenuItems.filter(
     (item) => item.category.toLowerCase().includes(cuisine?.toLowerCase() || "")
   );
+
+  const handleAddToCart = (item: typeof mockMenuItems[0]) => {
+    addToCart(item);
+    toast.success(`${item.name} added to cart!`);
+  };
 
   return (
     <div className="min-h-screen bg-background animate-fade-in">
@@ -116,9 +124,19 @@ const CuisineDetail = () => {
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-lg">₹{item.price}</span>
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                      <span className="text-sm font-medium">4.5</span>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                        <span className="text-sm font-medium">4.5</span>
+                      </div>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => handleAddToCart(item)}
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Add
+                      </Button>
                     </div>
                   </div>
                 </CardContent>

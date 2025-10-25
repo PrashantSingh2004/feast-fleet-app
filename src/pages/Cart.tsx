@@ -1,37 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import { useState } from "react";
-import { mockMenuItems } from "@/data/mockData";
-import { CartItem } from "@/types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    { ...mockMenuItems[0], quantity: 2 },
-    { ...mockMenuItems[1], quantity: 1 }
-  ]);
+  const navigate = useNavigate();
+  const { cartItems, updateQuantity, removeFromCart, getCartTotal } = useCart();
 
-  const updateQuantity = (id: string, change: number) => {
-    setCartItems(
-      cartItems
-        .map((item) =>
-          item.id === id
-            ? { ...item, quantity: Math.max(0, item.quantity + change) }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
-  };
-
-  const removeItem = (id: string) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-  };
-
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const subtotal = getCartTotal();
   const deliveryFee = 40;
   const tax = subtotal * 0.05;
   const total = subtotal + deliveryFee + tax;
@@ -80,7 +57,7 @@ const Cart = () => {
                         </p>
                       </div>
                       <button
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeFromCart(item.id)}
                         className="text-destructive hover:text-destructive/80"
                       >
                         <Trash2 className="h-5 w-5" />
@@ -94,7 +71,7 @@ const Cart = () => {
 
                       <div className="flex items-center gap-3 border border-border rounded-lg px-3 py-1">
                         <button
-                          onClick={() => updateQuantity(item.id, -1)}
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
                           className="text-foreground hover:text-primary"
                         >
                           <Minus className="h-4 w-4" />
@@ -103,7 +80,7 @@ const Cart = () => {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id, 1)}
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
                           className="text-foreground hover:text-primary"
                         >
                           <Plus className="h-4 w-4" />
@@ -143,7 +120,12 @@ const Cart = () => {
                   </div>
                 </div>
 
-                <Button variant="hero" size="lg" className="w-full">
+                <Button 
+                  variant="hero" 
+                  size="lg" 
+                  className="w-full"
+                  onClick={() => navigate('/checkout')}
+                >
                   Proceed to Checkout
                 </Button>
               </div>
