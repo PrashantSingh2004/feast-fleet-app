@@ -5,6 +5,7 @@ import RestaurantCard from "@/components/RestaurantCard";
 import { mockRestaurants, cuisineCategories } from "@/data/mockData";
 import heroImage from "@/assets/hero-food.jpg";
 import Navbar from "@/components/Navbar";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
@@ -45,8 +46,9 @@ const Home = () => {
         <h2 className="text-3xl font-bold mb-8 text-foreground">Explore Cuisines</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {cuisineCategories.map((cuisine) => (
-            <div
+            <Link
               key={cuisine.name}
+              to={`/cuisine/${cuisine.name.toLowerCase()}`}
               className="group cursor-pointer text-center"
             >
               <div className="relative overflow-hidden rounded-full aspect-square mb-3 border-2 border-border hover:border-primary transition-[var(--transition-smooth)]">
@@ -57,7 +59,7 @@ const Home = () => {
                 />
               </div>
               <p className="font-medium text-foreground">{cuisine.name}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
