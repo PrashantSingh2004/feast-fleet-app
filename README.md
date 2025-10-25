@@ -1,7 +1,4 @@
-Here’s a **beautiful, professional, and GitHub-ready README.md** for your project **“FeastFleet – Online Food Delivery Application”** 👇
-(You can copy-paste this directly into your project’s `README.md` file.)
 
----
 
 # 🍽️ **FeastFleet – Online Food Delivery Website**
 
